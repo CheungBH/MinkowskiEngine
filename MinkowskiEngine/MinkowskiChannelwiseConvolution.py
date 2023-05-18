@@ -182,12 +182,17 @@ class MinkowskiChannelwiseConvolution(MinkowskiModuleBase):
             region_offset=region_offset_,
         )
 
+        kernel = self.kernel if quanted_params is None else quanted_params[0]
+
         for k, in_out in kernel_map.items():
             in_out = in_out.long().to(input.device)
-            out_F[in_out[1]] += input.F[in_out[0]] * self.kernel[k]
+            out_F[in_out[1]] += input.F[in_out[0]] * kernel[k]
 
-        if self.bias is not None:
-            out_F += self.bias
+        if quanted_params is not None:
+            out_F += quanted_params[1]
+        else:
+            if self.bias is not None:
+                out_F += self.bias
 
         return SparseTensor(out_F, coordinate_map_key=out_key, coordinate_manager=cm)
 

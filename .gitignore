@@ -5,6 +5,7 @@
 *.swn
 *.pyc
 
+.idea/
 build/
 objs/
 dist/
