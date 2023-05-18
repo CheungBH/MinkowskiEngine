@@ -143,6 +143,7 @@ class MinkowskiChannelwiseConvolution(MinkowskiModuleBase):
         self,
         input: SparseTensor,
         coords: Union[torch.IntTensor, CoordinateMapKey, SparseTensor] = None,
+        quanted_params=None,
     ):
         r"""
         :attr:`input` (`MinkowskiEngine.SparseTensor`): Input sparse tensor to apply a

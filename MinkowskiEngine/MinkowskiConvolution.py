@@ -288,7 +288,7 @@ class MinkowskiConvolutionBase(MinkowskiModuleBase):
         self,
         input: SparseTensor,
         coordinates: Union[torch.Tensor, CoordinateMapKey, SparseTensor] = None,
-        kernel: torch.Tensor = None,
+        quanted_params: torch.Tensor = None,
     ):
         r"""
         :attr:`input` (`MinkowskiEngine.SparseTensor`): Input sparse tensor to apply a
@@ -306,7 +306,7 @@ class MinkowskiConvolutionBase(MinkowskiModuleBase):
             # If the kernel_size == 1, the convolution is simply a matrix
             # multiplication
             out_coordinate_map_key = input.coordinate_map_key
-            outfeat = input.F.mm(self.kernel) if kernel is None else input.F.mm(kernel)
+            outfeat = input.F.mm(self.kernel) if quanted_params is None else input.F.mm(kernel[0])
         else:
             # Get a new coordinate_map_key or extract one from the coords
             out_coordinate_map_key = _get_coordinate_map_key(
@@ -321,8 +321,11 @@ class MinkowskiConvolutionBase(MinkowskiModuleBase):
                 out_coordinate_map_key,
                 input._manager,
             )
-        if self.bias is not None:
-            outfeat += self.bias
+        if quanted_params is not None:
+            outfeat += quanted_params[1]
+        else:
+            if self.bias is not None:
+                outfeat += self.bias
 
         return SparseTensor(
             outfeat,
