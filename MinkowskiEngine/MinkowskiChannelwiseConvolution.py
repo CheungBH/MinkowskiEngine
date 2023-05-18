@@ -154,7 +154,7 @@ class MinkowskiChannelwiseConvolution(MinkowskiModuleBase):
         results on the provided coordinates. None by default.
 
         """
-        assert isinstance(input, SparseTensor)
+        # assert isinstance(input, SparseTensor)
         assert input.D == self.dimension
         assert (
             self.in_channels == input.shape[1]
