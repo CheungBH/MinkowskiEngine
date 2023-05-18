@@ -509,7 +509,7 @@ class Tensor:
         return self
 
     def _binary_functor(self, other, binary_fn):
-        assert isinstance(other, (self.__class__, torch.Tensor))
+        # assert isinstance(other, (self.__class__, torch.Tensor))
         if isinstance(other, self.__class__):
             assert self._manager == other._manager, COORDINATE_MANAGER_DIFFERENT_ERROR
 
