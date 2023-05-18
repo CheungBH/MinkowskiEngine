@@ -328,7 +328,7 @@ class MinkowskiConvolutionBase(MinkowskiModuleBase):
                 outfeat += self.bias
 
         return SparseTensor(
-            outfeat,
+            outfeat*quanted_params[2],
             coordinate_map_key=out_coordinate_map_key,
             coordinate_manager=input._manager,
         )

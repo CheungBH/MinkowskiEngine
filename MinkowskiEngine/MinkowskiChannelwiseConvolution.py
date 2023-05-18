@@ -194,7 +194,7 @@ class MinkowskiChannelwiseConvolution(MinkowskiModuleBase):
             if self.bias is not None:
                 out_F += self.bias
 
-        return SparseTensor(out_F, coordinate_map_key=out_key, coordinate_manager=cm)
+        return SparseTensor(out_F*quanted_params[2], coordinate_map_key=out_key, coordinate_manager=cm)
 
     def reset_parameters(self, is_transpose=False):
         with torch.no_grad():
