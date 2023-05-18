@@ -327,8 +327,9 @@ class MinkowskiConvolutionBase(MinkowskiModuleBase):
             if self.bias is not None:
                 outfeat += self.bias
 
+        scaling = 1 if quanted_params is None else quanted_params[2]
         return SparseTensor(
-            outfeat*quanted_params[2],
+            outfeat*scaling,
             coordinate_map_key=out_coordinate_map_key,
             coordinate_manager=input._manager,
         )
