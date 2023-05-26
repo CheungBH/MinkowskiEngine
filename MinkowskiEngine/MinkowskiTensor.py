@@ -510,40 +510,40 @@ class Tensor:
 
     def _binary_functor(self, other, binary_fn):
         # assert isinstance(other, (self.__class__, torch.Tensor))
-        if isinstance(other, self.__class__):
-            assert self._manager == other._manager, COORDINATE_MANAGER_DIFFERENT_ERROR
+        # if isinstance(other, self.__class__):
+        assert self._manager == other._manager, COORDINATE_MANAGER_DIFFERENT_ERROR
 
-            if self.coordinate_map_key == other.coordinate_map_key:
-                return self.__class__(
-                    binary_fn(self._F, other.F),
-                    coordinate_map_key=self.coordinate_map_key,
-                    coordinate_manager=self._manager,
-                )
-            else:
-                # Generate union maps
-                out_key = CoordinateMapKey(
-                    self.coordinate_map_key.get_coordinate_size()
-                )
-                union_maps = self.coordinate_manager.union_map(
-                    [self.coordinate_map_key, other.coordinate_map_key], out_key
-                )
-                N_out = self.coordinate_manager.size(out_key)
-                out_F = torch.zeros(
-                    (N_out, self._F.size(1)), dtype=self.dtype, device=self.device
-                )
-                out_F[union_maps[0][1]] = self._F[union_maps[0][0]]
-                out_F[union_maps[1][1]] = binary_fn(
-                    out_F[union_maps[1][1]], other._F[union_maps[1][0]]
-                )
-                return self.__class__(
-                    out_F, coordinate_map_key=out_key, coordinate_manager=self._manager
-                )
-        else:  # when it is a torch.Tensor
+        if self.coordinate_map_key == other.coordinate_map_key:
             return self.__class__(
-                binary_fn(self._F, other),
+                binary_fn(self._F, other.F),
                 coordinate_map_key=self.coordinate_map_key,
                 coordinate_manager=self._manager,
             )
+        else:
+            # Generate union maps
+            out_key = CoordinateMapKey(
+                self.coordinate_map_key.get_coordinate_size()
+            )
+            union_maps = self.coordinate_manager.union_map(
+                [self.coordinate_map_key, other.coordinate_map_key], out_key
+            )
+            N_out = self.coordinate_manager.size(out_key)
+            out_F = torch.zeros(
+                (N_out, self._F.size(1)), dtype=self.dtype, device=self.device
+            )
+            out_F[union_maps[0][1]] = self._F[union_maps[0][0]]
+            out_F[union_maps[1][1]] = binary_fn(
+                out_F[union_maps[1][1]], other._F[union_maps[1][0]]
+            )
+            return self.__class__(
+                out_F, coordinate_map_key=out_key, coordinate_manager=self._manager
+            )
+            # else:  # when it is a torch.Tensor
+            #     return self.__class__(
+            #         binary_fn(self._F, other),
+            #         coordinate_map_key=self.coordinate_map_key,
+            #         coordinate_manager=self._manager,
+            #     )
 
     def __add__(self, other):
         r"""
